@@ -52,6 +52,7 @@ class Db {
     });
   }
 
+  //set info to true if you want to see query in console.log
   parameterisedQuery(sqlQuery, args, info = false) {
     return new Promise((resolve, reject) => {
       const handleQuery = (err, rows) => {

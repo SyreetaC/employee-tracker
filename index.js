@@ -7,9 +7,9 @@ let inProgress = true;
 //research console table to present each query in a table
 
 const init = async () => {
-  // const db = new Db("company_db");
+  const db = new Db("company_db");
 
-  // await db.start();
+  await db.start();
 
   while (inProgress) {
     const question = {
@@ -17,7 +17,6 @@ const init = async () => {
       type: "list",
       message: "Select an option below:",
       choices: [
-        //change to choice object rather than array! Short, value, name
         {
           short: "Employees",
           value: "viewAllEmployees",
@@ -94,19 +93,20 @@ const init = async () => {
       ],
     };
 
-    const answer = await inquirer.prompt(question);
+    const { action } = await inquirer.prompt(question);
 
-    if (answer.action === "exit") {
+    if (action === "exit") {
       await db.end();
       inProgress = false;
     } else {
-      console.log(answer);
+      if (action === "viewAllDepartments") {
+        const query = "SELECT * FROM departments";
+        const data = await db.query(query);
+        console.table(data);
+      }
     }
   }
 };
-
-//give initial options using inquirer
-// view ...., create..., update...., delete...exit...
 
 //function to view each employee, department and role.
 const viewEmployees = async () => {
@@ -114,6 +114,23 @@ const viewEmployees = async () => {
   //await connection to table
 };
 
+//get functions
+const viewEmployeesByRole = async () => {
+  console.log("View employees here");
+  //await connection to table
+};
+
+const viewEmployeesByDepartment = async () => {
+  console.log("View employees here");
+  //await connection to table
+};
+
+const viewRoles = async () => {
+  console.log("View roles here");
+  //await connection to table
+};
+
+//add functions
 //function to add new with questions from inquirer again. Once questions answered, insert into correct table using INSERT INTO
 const addEmployee = async () => {
   console.log("add new employee here");
@@ -133,9 +150,42 @@ const addDepartment = async () => {
   //await connection to table to INSERT
 };
 
+//update functions
 //function to choose a specific employee by id and update it/ choose from a list of employees? UPDATE
 const updateEmployee = async () => {
   console.log("update an employee here");
+  //await connection to table
+  //await inquirer prompt answers
+};
+
+const updateEmployeeRole = async () => {
+  console.log("update an employee here");
+  //await connection to table
+  //await inquirer prompt answers
+};
+
+const updateEmployeeManager = async () => {
+  console.log("update an employee here");
+  //await connection to table
+  //await inquirer prompt answers
+};
+
+//delete functions
+//function to choose a specific employee by id and delete it/ choose from a list of employees? DELETE
+const deleteEmployee = async () => {
+  console.log("delete an employee here");
+  //await connection to table
+  //await inquirer prompt answers
+};
+
+const deleteRole = async () => {
+  console.log("delete a role here");
+  //await connection to table
+  //await inquirer prompt answers
+};
+
+const deleteDepartment = async () => {
+  console.log("delete a department here");
   //await connection to table
   //await inquirer prompt answers
 };
