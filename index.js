@@ -16,10 +16,21 @@ const init = async () => {
       type: "list",
       message: "Select an option below:",
       choices: [
+        //view
         {
           short: "Employees",
           value: "viewAllEmployees",
           name: "View All Employees",
+        },
+        {
+          short: "Roles",
+          value: "viewAllRoles",
+          name: "View All Roles",
+        },
+        {
+          short: "Departments",
+          value: "viewAllDepartments",
+          name: "View All Departments",
         },
         {
           short: "Employees By Department",
@@ -31,16 +42,21 @@ const init = async () => {
           value: "viewAllEmployeesByRole",
           name: "View All Employees By Role",
         },
+        //add
         {
           short: "Add Employee",
           value: "addEmployee",
           name: "Add an Employee",
         },
         {
-          short: "Remove Employee",
-          value: "removeEmployee",
-          name: "Remove an Employee",
+          value: "addRole",
+          name: "Add Role",
         },
+        {
+          value: "addDepartment",
+          name: "Add Departments",
+        },
+        //update
         {
           value: "updateEmployee",
           name: "Update an Employee",
@@ -53,37 +69,28 @@ const init = async () => {
           value: "updateEmployeeManager",
           name: "Update Employee Manager",
         },
+
+        //remove
         {
-          short: "Roles",
-          value: "viewAllRoles",
-          name: "View All Roles",
-        },
-        {
-          value: "addRole",
-          name: "Add Role",
+          short: "Remove Employee",
+          value: "removeEmployee",
+          name: "Remove an Employee",
         },
         {
           value: "removeRole",
           name: "Remove Role",
         },
         {
-          short: "Departments",
-          value: "viewAllDepartments",
-          name: "View All Departments",
-        },
-        {
-          value: "addDepartment",
-          name: "Add Departments",
-        },
-        {
           value: "removeDepartment",
           name: "Remove Departments",
         },
+        //budget
         {
           short: "Budget",
           value: "viewBudget",
           name: "View Utilised Budget for a Department",
         },
+        //exit
         {
           short: "Exit",
           value: "exit",
@@ -128,7 +135,7 @@ const viewAllRoles = async () => {
   console.table(data);
 };
 
-//get functions
+//view by functions
 const viewEmployeesByRole = async () => {
   console.log("View employees here");
   //await connection to table
@@ -136,11 +143,6 @@ const viewEmployeesByRole = async () => {
 
 const viewEmployeesByDepartment = async () => {
   console.log("View employees here");
-  //await connection to table
-};
-
-const viewRoles = async () => {
-  console.log("View roles here");
   //await connection to table
 };
 
