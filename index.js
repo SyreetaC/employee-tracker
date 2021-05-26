@@ -87,4 +87,4 @@ const updateEmployee = async () => {
   //await inquirer prompt answers
   initialOptions();
 };
-init();
+init(initialOptions);
