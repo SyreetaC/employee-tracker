@@ -3,6 +3,8 @@ CREATE DATABASE company_db;
 
 USE company_db;
 
+--Look at foreign keys again
+
 CREATE TABLE departments(
   id INT NOT NULL,
   dept_name VARCHAR(30) NOT NULL,
@@ -12,7 +14,7 @@ CREATE TABLE departments(
 CREATE TABLE job_roles (
   id INT NOT NULL,
   title VARCHAR (30) NOT NULL,
-  salary DECIMAL(10,2),
+  salary DECIMAL(7,2),
   department_id INT NOT NULL,
   PRIMARY KEY (id)
   FOREIGN KEY (department_id) REFERENCES departments(id)
@@ -28,6 +30,7 @@ CREATE TABLE employees (
    FOREIGN KEY (role_id) REFERENCES job_roles(id)
    FOREIGN KEY (manager_id) REFERENCES employee(id) 
 );
+
 
 
 
