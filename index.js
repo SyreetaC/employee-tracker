@@ -30,7 +30,25 @@ const initialOptions = async () => {
       "Exit",
     ],
   });
+
   //add switch/case here to go through each option. If exit, connection end.
+  switch (answer.optionSelection) {
+    case "View Employees":
+      const viewAllEmployees = await viewEmployees();
+      break;
+  }
+  //     case "Engineer":
+  //       const generatedEngineer = await generateEngineer();
+  //       teamArray.push(generatedEngineer);
+  //       break;
+  //     case "Intern":
+  //       const generatedIntern = await generateIntern();
+  //       teamArray.push(generatedIntern);
+  //       break;
+  //     case "None":
+  //     default:
+  //       //multiple options that have the same result
+  //       return teamArray;
 };
 
 //function to view each employee, department and role.
