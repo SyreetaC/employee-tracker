@@ -15,3 +15,5 @@ class Db {
     this.connection = mysql.createConnection(dbOptions);
   }
 }
+
+module.exports = Db;
