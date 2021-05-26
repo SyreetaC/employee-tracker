@@ -3,9 +3,10 @@ const inquirer = require("inquirer");
 const Db = require("./db/db");
 const db = new Db("company_db");
 
+//Group functions by entity
+
 let inProgress = true;
 //where logic for queries will be stored
-//research console table to present each query in a table
 
 const init = async () => {
   await db.start();
@@ -136,6 +137,15 @@ const viewAllRoles = async () => {
 };
 
 //view by functions
+const viewEmployeesByManager = async () => {
+  console.log("View employees here");
+  //await connection to table BONUS
+};
+//List of manager to choose from- select from employees where manager id is null
+//which manager do you want to see the employees for?- list of managers (name) and id (value)
+//send in manager id
+//select from employee where manager id = manager id
+
 const viewEmployeesByRole = async () => {
   console.log("View employees here");
   //await connection to table

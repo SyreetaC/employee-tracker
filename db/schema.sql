@@ -3,7 +3,7 @@ CREATE DATABASE company_db;
 
 USE company_db;
 
---Look at foreign keys again
+-- Look at foreign keys again
 
 CREATE TABLE departments(
   id INT AUTO_INCREMENT NOT NULL,

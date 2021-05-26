@@ -1,13 +1,20 @@
 -- // insert data here
 
 USE company_db;
+START TRANSACTION;
+INSERT INTO employees (first_name, last_name, role_id) VALUES 
+('Sarah', 'Allen', '7'),
+('John', 'Smith', '6'),
+  ('Nicola', 'Hemming', '1'),
+ ('Shabnam', 'Hussain', '2'),
+ ('George', 'Potter', '3'),
+ ('David', 'Lloyd', '4'),
+ ('Charlotte', 'Hunt', '7'),
+ ('Lydia', 'Adams', '5'),
+ ('Devinder', 'Singh', '1');
+ROLLBACK;
 
-INSERT INTO employees (first_name, last_name, role_id) VALUES ('Sarah', 'Allen', '7');
-INSERT INTO employees (first_name, last_name, role_id) VALUES ('John', 'Smith', '6');
-INSERT INTO employees (first_name, last_name, role_id) VALUES ('Nicola', 'Hemming', '1');
-INSERT INTO employees (first_name, last_name, role_id) VALUES ('Shabnam', 'Hussain', '2');
-INSERT INTO employees (first_name, last_name, role_id) VALUES ('George', 'Potter', '3');
-INSERT INTO employees (first_name, last_name, role_id) VALUES ('David', 'Lloyd', '4');
-INSERT INTO employees (first_name, last_name, role_id) VALUES ('Charlotte', 'Hunt', '7');
-INSERT INTO employees (first_name, last_name, role_id) VALUES ('Lydia', 'Adams', '5');
-INSERT INTO employees (first_name, last_name, role_id) VALUES ('Devinder', 'Singh', '2');
+UPDATE employees SET manager_id = 6 WHERE id = 1; 
+UPDATE employees SET manager_id = 6 WHERE id BETWEEN 1 and 8; 
+UPDATE employees SET manager_id = NULL WHERE id = 5;
+UPDATE employees SET manager_id = 4 WHERE id = 9;
