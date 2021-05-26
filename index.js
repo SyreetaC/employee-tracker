@@ -62,18 +62,21 @@ const viewEmployees = async () => {
 const addEmployee = async () => {
   console.log("add new employee here");
   //await inquirer prompt answers
+  //await connection to table to INSERT
   initialOptions();
 };
 
 const addRole = async () => {
   console.log("add new role here");
   //await inquirer prompt answers
+  //await connection to table to INSERT
   initialOptions();
 };
 
 const addDepartment = async () => {
   console.log("add new department here");
   //await inquirer prompt answers
+  //await connection to table to INSERT
   initialOptions();
 };
 
