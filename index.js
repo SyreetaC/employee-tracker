@@ -1,14 +1,13 @@
 const mysql = require("mysql");
 const inquirer = require("inquirer");
 const Db = require("./db/db");
+const db = new Db("company_db");
 
 let inProgress = true;
 //where logic for queries will be stored
 //research console table to present each query in a table
 
 const init = async () => {
-  const db = new Db("company_db");
-
   await db.start();
 
   while (inProgress) {
@@ -100,18 +99,33 @@ const init = async () => {
       inProgress = false;
     } else {
       if (action === "viewAllDepartments") {
-        const query = "SELECT * FROM departments";
-        const data = await db.query(query);
-        console.table(data);
+        await viewAllDepartments();
+      } else if (action === "viewAllEmployees") {
+        await viewAllEmployees();
+      } else if (action === "viewAllRoles") {
+        await viewAllRoles();
       }
     }
   }
 };
 
 //function to view each employee, department and role.
-const viewEmployees = async () => {
-  console.log("View employees here");
-  //await connection to table
+const viewAllEmployees = async () => {
+  const query = "SELECT * FROM employees";
+  const data = await db.query(query);
+  console.table(data);
+};
+
+const viewAllDepartments = async () => {
+  const query = "SELECT * FROM departments";
+  const data = await db.query(query);
+  console.table(data);
+};
+
+const viewAllRoles = async () => {
+  const query = "SELECT * FROM job_roles";
+  const data = await db.query(query);
+  console.table(data);
 };
 
 //get functions
