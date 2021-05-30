@@ -143,7 +143,8 @@ const getDepartmentInfo = async () => {
 };
 //view by functions
 const viewEmployeesByDepartment = async (data) => {
-  getDepartmentInfo();
+  await getDepartmentInfo(data);
+  console.log(data);
   const departmentChoices = await data.map((department) => {
     //Return a "choice" object for inquirer
     return {
@@ -161,36 +162,43 @@ const viewEmployeesByDepartment = async (data) => {
   console.log(department);
   //Ask question and get deptId to use in query
   const { departmentId } = await inquirer.prompt(question);
-  //Use Id above to select employees by departmentId
-  //Use console.table() to display results})
 };
+// Use Id above to select employees by departmentId
+// Use console.table() to display results})
+//
 //List of departments to choose from
 //which department do you want to see the employees for?- list of departments (name) and id (value)
 //send in department id
 //select from employee where department id = department id
 
 //add functions
+
 //function to add new with questions from inquirer again. Once questions answered, insert into correct table using INSERT INTO
-const addEmployee = async () => {
+const getRoles = async () => {
+  const query = "SELECT * FROM roles";
+  const roles = await db.query(query);
+  console.log(roles);
+};
+
+const addEmployee = async (roles) => {
+  getRoles(roles);
   const employeeQuestions = [
     {
       type: "input",
       message: "Enter the first name of the employee:",
-      name: "First name",
+      name: "firstname",
     },
     {
       type: "input",
       message: "Enter the last name of the employee:",
-      name: "Last name",
-    },
-    {
-      type: "input",
-      message: "Enter the role of the employee:",
-      name: "Role",
+      name: "lastname",
     },
   ];
   const answers = await inquirer.prompt(employeeQuestions);
-  await db.parameterisedQuery();
+  await db.parameterisedQuery("INSERT INTO employees SET ?", {
+    first_name: answers.firstname,
+    last_name: answers.lastname,
+  });
 };
 
 const addRole = async () => {
