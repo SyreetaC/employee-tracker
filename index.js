@@ -93,6 +93,10 @@ const init = async () => {
         await addRole();
       } else if (action === "removeEmployee") {
         await deleteEmployee();
+      } else if (action === "updateEmployeeRole") {
+        await updateEmployeeRole();
+      } else if (action === "updateEmployeeManager") {
+        await updateEmployeeManager();
       }
     }
   }
@@ -238,9 +242,39 @@ const addRole = async () => {
 //update functions
 //function to choose a specific employee by id and update it/ choose from a list of employees? UPDATE
 const updateEmployeeRole = async () => {
-  console.log("update an employee here");
-  //await connection to table
-  //await inquirer prompt answers
+  const employees = await db.query("SELECT first_name FROM employees");
+  const roles = await db.query("SELECT * FROM job_roles");
+
+  const employeeChoices = employees.map((employee) => {
+    return {
+      short: employee.first_name + employee.last_name,
+      value: employee.id,
+      name: employee.first_name,
+    };
+  });
+  const roleChoices = roles.map((role) => {
+    return {
+      short: role.id,
+      value: role.title,
+    };
+  });
+  const { employeeName } = await inquirer.prompt([
+    {
+      type: "list",
+      name: "employeeName",
+      message: "Which employee would you like to update?",
+      choices: employeeChoices,
+    },
+  ]);
+  const { roleTitle } = await inquirer.prompt([
+    {
+      type: "list",
+      name: "roleTitle",
+      message: "Which role would you like to add to this employee?",
+      choices: roleChoices,
+    },
+  ]);
+  //update query for roles
 };
 
 const updateEmployeeManager = async () => {
