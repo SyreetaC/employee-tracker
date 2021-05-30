@@ -91,6 +91,8 @@ const init = async () => {
         await addEmployee();
       } else if (action === "addRole") {
         await addRole();
+      } else if (action === "removeEmployee") {
+        await deleteEmployee();
       }
     }
   }
@@ -191,50 +193,47 @@ const addEmployee = async () => {
     role_id: answer.employeeRoleId,
     manager_id: answer.employeeManagerId,
   });
+  console.table(result); //should this show the newly added employee?
   console.log(`${answer.firstName} ${answer.lastName} added successfully!`);
 };
 
-// const addRole = async () => {
-//   const departments = await db.query("SELECT * FROM departments");
+const addRole = async () => {
+  const departments = await db.query("SELECT * FROM departments");
 
-//   const answer = await inquirer.prompt([
-//     {
-//       name: "title",
-//       type: "input",
-//       message: "What is the name of the role?",
-//     },
-//     {
-//       name: "salary",
-//       type: "input",
-//       message: "What is the salary of this role?",
-//     },
-//     {
-//       name: "departmentId",
-//       type: "list",
-//       choices: departments.map((departmentId) => {
-//         return {
-//           name: departmentId.dept_name,
-//           value: departmentId.department_id,
-//         };
-//       }),
-//       message: "What department does this role belong to?",
-//     },
-//   ]);
+  const answer = await inquirer.prompt([
+    {
+      name: "title",
+      type: "input",
+      message: "What is the name of the role?",
+    },
+    {
+      name: "salary",
+      type: "input",
+      message: "What is the salary of this role?",
+    },
+    {
+      name: "departmentId",
+      type: "list",
+      choices: departments.map((departmentId) => {
+        return {
+          name: departmentId.dept_name,
+          value: departmentId.department_id,
+        };
+      }),
+      message: "What department does this role belong to?",
+    },
+  ]);
 
-//   const chosenDepartment;
-//   for (i = 0; i < departments.length; i++) {
-//     if (departments[i].department_id === answer.choice) {
-//       chosenDepartment = departments[i];
-//     }
-//   }
-//   const result = await db.query("INSERT INTO job_roles SET ?", {
-//     title: answer.title,
-//     salary: answer.salary,
-//     department_id: answer.departmentId,
-//   });
+  //How do I use the department id and insert a role?
+  //figure out query
+  const result = await db.query("INSERT INTO job_roles SET ??", {
+    title: answer.title,
+    salary: answer.salary,
+    department_id: answer.departmentId,
+  });
 
-//   console.log(`${answer.title} role added successfully.`);
-// };
+  console.log(`${answer.title} role added successfully.`);
+};
 
 //update functions
 //function to choose a specific employee by id and update it/ choose from a list of employees? UPDATE
@@ -253,9 +252,29 @@ const updateEmployeeManager = async () => {
 //delete function
 //function to choose a specific employee by id and delete it/ choose from a list of employees? DELETE
 const deleteEmployee = async () => {
-  console.log("delete an employee here");
-  //await connection to table
-  //await inquirer prompt answers
+  const employees = "SELECT * FROM employees";
+  const data = await db.query(employees);
+  console.log(data);
+  const employeeChoices = await data.map((employee) => {
+    return {
+      short: employee.first_name,
+      value: employee.id,
+      name: `Delete the following employee: ${employee.first_name}`,
+    };
+  });
+  const { employeeId } = await inquirer.prompt([
+    {
+      type: "list",
+      name: "employeeId",
+      message: "Which employee would you like to delete?",
+      choices: employeeChoices,
+    },
+  ]);
+  const deleteQuery = db.query(
+    "DELETE FROM department WHERE id = ??",
+    employeeId
+  );
+  console.table(deleteQuery); //what gets consoled here?
 };
 
 init();
