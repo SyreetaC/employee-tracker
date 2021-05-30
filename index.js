@@ -137,6 +137,7 @@ const viewEmployeesByDepartment = async () => {
   };
   //Ask question and get deptId to use in query
   const { departmentId } = await inquirer.prompt(question);
+  //how do I use department id to use here?
   const departmentEmployees = await db.query(
     "SELECT first_name, last_name, title, salary FROM employees LEFT JOIN job_roles ON employees.role_id=job_roles.id RIGHT JOIN departments ON job_roles.id=departments.id;"
   );
