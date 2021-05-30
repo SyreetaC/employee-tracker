@@ -112,6 +112,8 @@ const init = async () => {
         await viewAllEmployees();
       } else if (action === "viewAllRoles") {
         await viewAllRoles();
+      } else if (action === "viewAllEmployeesByDepartment") {
+        await viewEmployeesByDepartment();
       }
     }
   }
@@ -137,24 +139,35 @@ const viewAllRoles = async () => {
 };
 
 //view by functions
-const viewEmployeesByManager = async () => {
-  console.log("View employees here");
-  //await connection to table BONUS
+const viewEmployeesByDepartment = async (department) => {
+  //Construct query for getting choices
+  const query = "SELECT * FROM departments";
+  const data = await db.query(query);
+  console.log(data);
+  const departmentChoices = await data.map((department) => {
+    //Return a "choice" object for inquirer
+    return {
+      short: department.name,
+      value: department.id,
+      name: `View the ${department.name} department`,
+    };
+  });
+  const question = {
+    name: "departmentId",
+    type: "list",
+    message: "Which department would you like to view?",
+    choices: departmentChoices,
+  };
+  console.log(department);
+  //Ask question and get deptId to use in query
+  const { departmentId } = await inquirer.prompt(question);
+  //Use Id above to select employees by departmentId
+  //Use console.table() to display results
 };
-//List of manager to choose from- select from employees where manager id is null
-//which manager do you want to see the employees for?- list of managers (name) and id (value)
-//send in manager id
-//select from employee where manager id = manager id
-
-const viewEmployeesByRole = async () => {
-  console.log("View employees here");
-  //await connection to table
-};
-
-const viewEmployeesByDepartment = async () => {
-  console.log("View employees here");
-  //await connection to table
-};
+//List of departments to choose from
+//which department do you want to see the employees for?- list of departments (name) and id (value)
+//send in department id
+//select from employee where department id = department id
 
 //add functions
 //function to add new with questions from inquirer again. Once questions answered, insert into correct table using INSERT INTO
