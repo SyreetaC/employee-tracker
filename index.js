@@ -3,8 +3,6 @@ const inquirer = require("inquirer");
 const Db = require("./db/db");
 const db = new Db("company_db");
 
-//Group functions by entity
-
 let inProgress = true;
 //where logic for queries will be stored
 
@@ -49,15 +47,7 @@ const init = async () => {
           value: "addRole",
           name: "Add Role",
         },
-        {
-          value: "addDepartment",
-          name: "Add Departments",
-        },
         //update
-        {
-          value: "updateEmployee",
-          name: "Update an Employee",
-        },
         {
           value: "updateEmployeeRole",
           name: "Update Employee Role",
@@ -73,20 +63,7 @@ const init = async () => {
           value: "removeEmployee",
           name: "Remove an Employee",
         },
-        {
-          value: "removeRole",
-          name: "Remove Role",
-        },
-        {
-          value: "removeDepartment",
-          name: "Remove Departments",
-        },
-        //budget
-        {
-          short: "Budget",
-          value: "viewBudget",
-          name: "View Utilised Budget for a Department",
-        },
+
         //exit
         {
           short: "Exit",
@@ -138,21 +115,18 @@ const viewAllRoles = async () => {
   console.table(data);
 };
 
-const getDepartmentInfo = async () => {
+//view by function
+const viewEmployeesByDepartment = async () => {
+  //Query for getting choices
   const query = "SELECT * FROM departments";
   const data = await db.query(query);
-  return data;
-};
-//view by functions
-const viewEmployeesByDepartment = async (data) => {
-  await getDepartmentInfo(data);
-  console.log(data);
+  //Get choices for departments and make question obj
   const departmentChoices = await data.map((department) => {
     //Return a "choice" object for inquirer
     return {
-      short: department.name,
+      short: department.dept_name,
       value: department.id,
-      name: `View the ${department.name} department`,
+      name: `View the ${department.dept_name} department`,
     };
   });
   const question = {
@@ -161,21 +135,15 @@ const viewEmployeesByDepartment = async (data) => {
     message: "Which department would you like to view?",
     choices: departmentChoices,
   };
-  console.log(department);
   //Ask question and get deptId to use in query
   const { departmentId } = await inquirer.prompt(question);
+  const departmentEmployees = await db.query(
+    "SELECT first_name, last_name, title, salary FROM employees LEFT JOIN job_roles ON employees.role_id=job_roles.id RIGHT JOIN departments ON job_roles.id=departments.id;"
+  );
+  console.table(departmentEmployees);
 };
-// Use Id above to select employees by departmentId
-// Use console.table() to display results})
-//
-//List of departments to choose from
-//which department do you want to see the employees for?- list of departments (name) and id (value)
-//send in department id
-//select from employee where department id = department id
 
 //add functions
-
-//function to add new with questions from inquirer again. Once questions answered, insert into correct table using INSERT INTO
 const addEmployee = async () => {
   const roles = await db.query("SELECT * FROM job_roles");
 
@@ -225,62 +193,50 @@ const addEmployee = async () => {
   console.log(`${answer.firstName} ${answer.lastName} added successfully!`);
 };
 
-const addRole = async () => {
-  const departments = await db.query("SELECT * FROM departments");
+// const addRole = async () => {
+//   const departments = await db.query("SELECT * FROM departments");
 
-  const answer = await inquirer.prompt([
-    {
-      name: "title",
-      type: "input",
-      message: "What is the name of the role?",
-    },
-    {
-      name: "salary",
-      type: "input",
-      message: "What is the salary of this role?",
-    },
-    {
-      name: "departmentId",
-      type: "list",
-      choices: departments.map((departmentId) => {
-        return {
-          name: departmentId.dept_name,
-          value: departmentId.department_id,
-        };
-      }),
-      message: "What department does this role belong to?",
-    },
-  ]);
+//   const answer = await inquirer.prompt([
+//     {
+//       name: "title",
+//       type: "input",
+//       message: "What is the name of the role?",
+//     },
+//     {
+//       name: "salary",
+//       type: "input",
+//       message: "What is the salary of this role?",
+//     },
+//     {
+//       name: "departmentId",
+//       type: "list",
+//       choices: departments.map((departmentId) => {
+//         return {
+//           name: departmentId.dept_name,
+//           value: departmentId.department_id,
+//         };
+//       }),
+//       message: "What department does this role belong to?",
+//     },
+//   ]);
 
-  const chosenDepartment;
-  for (i = 0; i < departments.length; i++) {
-    if (departments[i].department_id === answer.choice) {
-      chosenDepartment = departments[i];
-    }
-  }
-  const result = await db.query("INSERT INTO job_roles SET ?", {
-    title: answer.title,
-    salary: answer.salary,
-    department_id: answer.departmentId,
-  });
+//   const chosenDepartment;
+//   for (i = 0; i < departments.length; i++) {
+//     if (departments[i].department_id === answer.choice) {
+//       chosenDepartment = departments[i];
+//     }
+//   }
+//   const result = await db.query("INSERT INTO job_roles SET ?", {
+//     title: answer.title,
+//     salary: answer.salary,
+//     department_id: answer.departmentId,
+//   });
 
-  console.log(`${answer.title} role added successfully.`);
-};
-
-const addDepartment = async () => {
-  console.log("add new department here");
-  //await inquirer prompt answers
-  //await connection to table to INSERT
-};
+//   console.log(`${answer.title} role added successfully.`);
+// };
 
 //update functions
 //function to choose a specific employee by id and update it/ choose from a list of employees? UPDATE
-const updateEmployee = async () => {
-  console.log("update an employee here");
-  //await connection to table
-  //await inquirer prompt answers
-};
-
 const updateEmployeeRole = async () => {
   console.log("update an employee here");
   //await connection to table
@@ -293,22 +249,10 @@ const updateEmployeeManager = async () => {
   //await inquirer prompt answers
 };
 
-//delete functions
+//delete function
 //function to choose a specific employee by id and delete it/ choose from a list of employees? DELETE
 const deleteEmployee = async () => {
   console.log("delete an employee here");
-  //await connection to table
-  //await inquirer prompt answers
-};
-
-const deleteRole = async () => {
-  console.log("delete a role here");
-  //await connection to table
-  //await inquirer prompt answers
-};
-
-const deleteDepartment = async () => {
-  console.log("delete a department here");
   //await connection to table
   //await inquirer prompt answers
 };
