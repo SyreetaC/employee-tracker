@@ -132,7 +132,6 @@ const viewEmployeesByDepartment = async () => {
     return {
       short: department.dept_name,
       value: department.id,
-      name: `View the ${department.dept_name} department`,
     };
   });
   const question = {
@@ -147,7 +146,7 @@ const viewEmployeesByDepartment = async () => {
   const departmentEmployees = await db.query(
     "SELECT first_name, last_name, title, salary, role_id, department_id FROM employees LEFT JOIN job_roles ON role_id = job_roles.id LEFT JOIN departments ON department_id = departments.id"
   );
-  console.table(departmentEmployees);
+  console.log(departmentEmployees);
 };
 
 //add functions
