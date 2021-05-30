@@ -246,7 +246,7 @@ const updateEmployeeRole = async () => {
 
   const employeeChoices = employees.map((employee) => {
     return {
-      short: employee.first_name + employee.last_name,
+      short: employee.first_name,
       value: employee.id,
       name: employee.first_name,
     };
@@ -257,7 +257,7 @@ const updateEmployeeRole = async () => {
       value: role.title,
     };
   });
-  const { employeeName } = await inquirer.prompt([
+  const { employeeId } = await inquirer.prompt([
     {
       type: "list",
       name: "employeeName",
@@ -265,7 +265,7 @@ const updateEmployeeRole = async () => {
       choices: employeeChoices,
     },
   ]);
-  const { roleTitle } = await inquirer.prompt([
+  const { roleId } = await inquirer.prompt([
     {
       type: "list",
       name: "roleTitle",
@@ -273,8 +273,10 @@ const updateEmployeeRole = async () => {
       choices: roleChoices,
     },
   ]);
-  const updateQuery = await db.query(
-    "UPDATE employees SET role_id = role_id WHERE first_name = first_name"
+  const updateQuery = await db.parameterisedQuery(
+    "UPDATE employees SET role_id = ? WHERE id = ?",
+    employeeId,
+    roleId
   );
   console.log(updateQuery);
 };
@@ -290,7 +292,6 @@ const updateEmployeeManager = async () => {
 const deleteEmployee = async () => {
   const employees = "SELECT * FROM employees";
   const data = await db.query(employees);
-  console.log(data);
   const employeeChoices = await data.map((employee) => {
     return {
       short: employee.first_name,
@@ -298,7 +299,7 @@ const deleteEmployee = async () => {
       name: `Delete the following employee: ${employee.first_name}`,
     };
   });
-  const { employeeId } = await inquirer.prompt([
+  const id = await inquirer.prompt([
     {
       type: "list",
       name: "employeeId",
@@ -306,11 +307,11 @@ const deleteEmployee = async () => {
       choices: employeeChoices,
     },
   ]);
-  const deleteQuery = db.query(
-    "DELETE FROM department WHERE id = ??",
-    employeeId
+  console.log(id);
+  const deleteQuery = db.parameterisedQuery(
+    "DELETE FROM employee WHERE id = ??",
+    id
   );
-  console.table(deleteQuery); //what gets consoled here?
 };
 
 init();
