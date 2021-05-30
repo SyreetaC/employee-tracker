@@ -174,31 +174,57 @@ const viewEmployeesByDepartment = async (data) => {
 //add functions
 
 //function to add new with questions from inquirer again. Once questions answered, insert into correct table using INSERT INTO
-const getRoles = async () => {
-  const query = "SELECT * FROM roles";
-  const roles = await db.query(query);
-  console.log(roles);
-};
+const addEmployee = async () => {
+  try {
+    const roles = await db.query("SELECT * FROM job_roles");
 
-const addEmployee = async (roles) => {
-  getRoles(roles);
-  const employeeQuestions = [
-    {
-      type: "input",
-      message: "Enter the first name of the employee:",
-      name: "firstname",
-    },
-    {
-      type: "input",
-      message: "Enter the last name of the employee:",
-      name: "lastname",
-    },
-  ];
-  const answers = await inquirer.prompt(employeeQuestions);
-  await db.parameterisedQuery("INSERT INTO employees SET ?", {
-    first_name: answers.firstname,
-    last_name: answers.lastname,
-  });
+    const managerIds = await db.query("SELECT * FROM employees");
+
+    const answer = await inquirer.prompt([
+      {
+        name: "firstName",
+        type: "input",
+        message: "What is the first name of the Employee?",
+      },
+      {
+        name: "lastName",
+        type: "input",
+        message: "What is the last name of the Employee?",
+      },
+      {
+        name: "employeeRoleId",
+        type: "list",
+        choices: roles.map((role) => {
+          return {
+            name: role.title,
+            value: role.id,
+          };
+        }),
+        message: "What is this Employee's role id?",
+      },
+      {
+        name: "employeeManagerId",
+        type: "list",
+        choices: managerIds.map((manager) => {
+          return {
+            name: "manager",
+            value: manager.id,
+          };
+        }),
+        message: "What is this Employee's Manager's Id?",
+      },
+    ]);
+
+    const result = await db.parameterisedQuery("INSERT INTO employees SET ?", {
+      first_name: answer.firstName,
+      last_name: answer.lastName,
+      role_id: answer.employeeRoleId,
+      manager_id: answer.employeeManagerId,
+    });
+    console.log(`${answer.firstName} ${answer.lastName} added successfully!`);
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 const addRole = async () => {
