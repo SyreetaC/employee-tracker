@@ -274,7 +274,10 @@ const updateEmployeeRole = async () => {
       choices: roleChoices,
     },
   ]);
-  //update query for roles
+  const updateQuery = await db.query(
+    "UPDATE employees SET role_id = role_id WHERE first_name = first_name"
+  );
+  console.log(updateQuery);
 };
 
 const updateEmployeeManager = async () => {
