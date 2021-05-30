@@ -112,6 +112,8 @@ const init = async () => {
         await viewEmployeesByDepartment();
       } else if (action === "addEmployee") {
         await addEmployee();
+      } else if (action === "addRole") {
+        await addRole();
       }
     }
   }
@@ -224,9 +226,45 @@ const addEmployee = async () => {
 };
 
 const addRole = async () => {
-  console.log("add new role here");
-  //await inquirer prompt answers
-  //await connection to table to INSERT
+  const departments = await db.query("SELECT * FROM departments");
+
+  const answer = await inquirer.prompt([
+    {
+      name: "title",
+      type: "input",
+      message: "What is the name of the role?",
+    },
+    {
+      name: "salary",
+      type: "input",
+      message: "What is the salary of this role?",
+    },
+    {
+      name: "departmentId",
+      type: "list",
+      choices: departments.map((departmentId) => {
+        return {
+          name: departmentId.dept_name,
+          value: departmentId.department_id,
+        };
+      }),
+      message: "What department does this role belong to?",
+    },
+  ]);
+
+  const chosenDepartment;
+  for (i = 0; i < departments.length; i++) {
+    if (departments[i].department_id === answer.choice) {
+      chosenDepartment = departments[i];
+    }
+  }
+  const result = await db.query("INSERT INTO job_roles SET ?", {
+    title: answer.title,
+    salary: answer.salary,
+    department_id: answer.departmentId,
+  });
+
+  console.log(`${answer.title} role added successfully.`);
 };
 
 const addDepartment = async () => {
