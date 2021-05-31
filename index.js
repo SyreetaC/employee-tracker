@@ -187,8 +187,8 @@ const addEmployee = async () => {
       type: "list",
       choices: managers.map((manager) => {
         return {
-          name: "manager",
-          value: manager.manager_id,
+          name: manager.first_name,
+          value: manager.id,
         };
       }),
       message: "What is this Employee's Manager's Id?",
