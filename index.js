@@ -132,6 +132,7 @@ const viewEmployeesByDepartment = async () => {
     return {
       short: department.dept_name,
       value: department.id,
+      name: department.dept_name,
     };
   });
   const question = {
@@ -142,11 +143,14 @@ const viewEmployeesByDepartment = async () => {
   };
   //Ask question and get deptId to use in query
   const { departmentId } = await inquirer.prompt(question);
-  //how do I use department id to use here?
-  const departmentEmployees = await db.query(
-    "SELECT first_name, last_name, title, salary, role_id, department_id FROM employees LEFT JOIN job_roles ON role_id = job_roles.id LEFT JOIN departments ON department_id = departments.id"
-  );
-  console.log(departmentEmployees);
+  console.log(departmentId);
+  if (departmentId === departmentChoices) {
+    const departmentEmployees = await db.parameterisedQuery(
+      "SELECT first_name, last_name, title, salary, role_id, department_id FROM employees LEFT JOIN job_roles ON role_id = job_roles.id LEFT JOIN departments ON department_id = departments.id",
+      [departmentId]
+    );
+    console.table(departmentEmployees);
+  }
 };
 
 //add functions
@@ -229,10 +233,10 @@ const addRole = async () => {
 
   //How do I use the department id and insert a role?
   //figure out query
-  const result = await db.query("INSERT INTO job_roles SET ??", {
-    title: answer.title,
-    salary: answer.salary,
-    department_id: answer.departmentId,
+  const { role } = await db.parameterisedQuery("INSERT INTO job_roles SET ??", {
+    title: role.title,
+    salary: role.salary,
+    department_id: role.departmentId,
   });
 
   console.log(`${answer.title} role added successfully.`);
@@ -274,15 +278,15 @@ const updateEmployeeRole = async () => {
     },
   ]);
   const updateQuery = await db.parameterisedQuery(
-    "UPDATE employees SET role_id = ? WHERE id = ?",
-    employeeId,
-    roleId
+    "UPDATE employees SET role_id = '?' WHERE id = '?'",
+    [employeeId, roleId]
   );
   console.log(updateQuery);
 };
 
 const updateEmployeeManager = async () => {
-  console.log("update an employee here");
+  const employees = await db.query("SELECT first_name FROM employees");
+  const managers = await db.query("SELECT manager_id FROM employees");
   //await connection to table
   //await inquirer prompt answers
 };
@@ -294,12 +298,12 @@ const deleteEmployee = async () => {
   const data = await db.query(employees);
   const employeeChoices = await data.map((employee) => {
     return {
-      short: employee.first_name,
+      short: employee.id,
       value: employee.id,
       name: `Delete the following employee: ${employee.first_name}`,
     };
   });
-  const id = await inquirer.prompt([
+  const { employeeId } = await inquirer.prompt([
     {
       type: "list",
       name: "employeeId",
@@ -307,11 +311,12 @@ const deleteEmployee = async () => {
       choices: employeeChoices,
     },
   ]);
-  console.log(id);
-  const deleteQuery = db.parameterisedQuery(
-    "DELETE FROM employee WHERE id = ??",
-    id
-  );
+
+  await db.parameterisedQuery("DELETE FROM ?? WHERE ?? = '?'", [
+    "employees",
+    "employees.id",
+    employeeId,
+  ]);
 };
 
 init();
