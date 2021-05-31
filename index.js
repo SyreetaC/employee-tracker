@@ -156,7 +156,9 @@ const viewEmployeesByDepartment = async () => {
 const addEmployee = async () => {
   const roles = await db.query("SELECT * FROM job_roles");
 
-  const managers = await db.query("SELECT manager_id FROM employees"); //how do I get manager ids from this?
+  const managers = await db.query(
+    "SELECT employees.first_name, employees.last_name, manager_id, title FROM employees LEFT JOIN job_roles ON role_id = job_roles.id WHERE title LIKE '%Manager%'"
+  );
 
   const answer = await inquirer.prompt([
     {
