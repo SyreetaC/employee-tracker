@@ -144,13 +144,12 @@ const viewEmployeesByDepartment = async () => {
   //Ask question and get deptId to use in query
   const { departmentId } = await inquirer.prompt(question);
   console.log(departmentId);
-  if (departmentId === departmentChoices) {
-    const departmentEmployees = await db.parameterisedQuery(
-      "SELECT first_name, last_name, title, salary, role_id, department_id FROM employees LEFT JOIN job_roles ON role_id = job_roles.id LEFT JOIN departments ON department_id = departments.id",
-      [departmentId]
-    );
-    console.table(departmentEmployees);
-  }
+
+  const departmentEmployees = await db.parameterisedQuery(
+    "SELECT first_name, last_name, title, salary, role_id, department_id, dept_name AS department FROM employees LEFT JOIN job_roles ON role_id = job_roles.id LEFT JOIN departments ON department_id = departments.id WHERE department_id = ?",
+    [departmentId]
+  );
+  console.table(departmentEmployees);
 };
 
 //add functions
@@ -200,7 +199,7 @@ const addEmployee = async () => {
     role_id: answer.employeeRoleId,
     manager_id: answer.employeeManagerId,
   });
-  console.table(result); //should this show the newly added employee?
+  console.table(result);
   console.log(`${answer.firstName} ${answer.lastName} added successfully!`);
 };
 
@@ -234,12 +233,12 @@ const addRole = async () => {
   //How do I use the department id and insert a role?
   //figure out query
   const { role } = await db.parameterisedQuery("INSERT INTO job_roles SET ??", {
-    title: role.title,
-    salary: role.salary,
-    department_id: role.departmentId,
+    title: answer.title,
+    salary: answer.salary,
+    department_id: answer.departmentId,
   });
 
-  console.log(`${answer.title} role added successfully.`);
+  console.log(`${role.title} role added successfully.`);
 };
 
 //update functions
