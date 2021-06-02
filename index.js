@@ -227,6 +227,7 @@ const addEmployee = async () => {
 
 const addRole = async () => {
   const departments = await db.query("SELECT * FROM departments");
+  console.log(departments);
 
   const answer = await inquirer.prompt([
     {
@@ -242,28 +243,30 @@ const addRole = async () => {
     {
       name: "departmentId",
       type: "list",
-      choices: departments.map((departmentId) => {
+      choices: departments.map((department) => {
         return {
-          name: departmentId.dept_name,
-          value: departmentId.department_id,
+          name: department.dept_name,
+          value: department.id,
         };
       }),
+
       message: "What department does this role belong to?",
     },
   ]);
+  console.log(answer);
 
   //How do I use the department id and insert a role?
   //figure out query
-  const { role } = await db.parameterisedQuery(
-    "INSERT INTO job_roles VALUES ?",
+  await db.parameterisedQuery("INSERT INTO ?? SET ?", [
+    "job_roles",
     {
       title: answer.title,
       salary: answer.salary,
       department_id: answer.departmentId,
-    }
-  );
+    },
+  ]);
 
-  console.log(`${role.title} role added successfully.`);
+  console.log(`${answer.title} role added successfully.`);
 };
 
 const addDepartment = async () => {
