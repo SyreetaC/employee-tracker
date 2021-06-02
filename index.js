@@ -47,6 +47,10 @@ const init = async () => {
           value: "addRole",
           name: "Add Role",
         },
+        {
+          value: "addDepartment",
+          name: "Add Department",
+        },
         //update
         {
           value: "updateEmployeeRole",
@@ -243,6 +247,7 @@ const addRole = async () => {
   console.log(`${role.title} role added successfully.`);
 };
 
+const addDepartment = async () => {};
 //update functions
 //function to choose a specific employee by id and update it/ choose from a list of employees? UPDATE
 const updateEmployeeRole = async () => {
@@ -251,21 +256,21 @@ const updateEmployeeRole = async () => {
 
   const employeeChoices = employees.map((employee) => {
     return {
-      short: employee.first_name,
       value: employee.id,
-      name: employee.first_name,
+      name: `${employee.first_name} ${employee.last_name}`,
     };
   });
   const roleChoices = roles.map((role) => {
     return {
+      name: role.title,
       short: role.id,
-      value: role.title,
+      value: role.id,
     };
   });
   const { employeeId } = await inquirer.prompt([
     {
       type: "list",
-      name: "employeeName",
+      name: "employeeId",
       message: "Which employee would you like to update?",
       choices: employeeChoices,
     },
@@ -273,7 +278,7 @@ const updateEmployeeRole = async () => {
   const { roleId } = await inquirer.prompt([
     {
       type: "list",
-      name: "roleTitle",
+      name: "roleId",
       message: "Which role would you like to add to this employee?",
       choices: roleChoices,
     },
@@ -282,7 +287,6 @@ const updateEmployeeRole = async () => {
     "UPDATE employees SET role_id = '?' WHERE id = '?'",
     [employeeId, roleId]
   );
-  console.log(updateQuery);
 };
 
 const updateEmployeeManager = async () => {
