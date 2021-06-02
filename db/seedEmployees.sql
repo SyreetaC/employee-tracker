@@ -1,7 +1,7 @@
 -- // insert data here
 
 USE company_db;
-START TRANSACTION;
+
 INSERT INTO employees (first_name, last_name, role_id) VALUES 
 ('Sarah', 'Allen', '7'),
 ('John', 'Smith', '6'),
@@ -12,7 +12,7 @@ INSERT INTO employees (first_name, last_name, role_id) VALUES
  ('Charlotte', 'Hunt', '7'),
  ('Lydia', 'Adams', '5'),
  ('Devinder', 'Singh', '1');
-ROLLBACK;
+
 
 UPDATE employees SET manager_id = 6 WHERE id = 1; 
 UPDATE employees SET manager_id = 6 WHERE id BETWEEN 1 and 8; 

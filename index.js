@@ -95,6 +95,8 @@ const init = async () => {
         await addEmployee();
       } else if (action === "addRole") {
         await addRole();
+      } else if (action === "addDepartment") {
+        await addDepartment();
       } else if (action === "removeEmployee") {
         await deleteEmployee();
       } else if (action === "updateEmployeeRole") {
@@ -161,7 +163,7 @@ const addEmployee = async () => {
   const roles = await db.query("SELECT * FROM job_roles");
 
   const managers = await db.query(
-    "SELECT employees.first_name, employees.last_name, manager_id, title FROM employees LEFT JOIN job_roles ON role_id = job_roles.id WHERE title LIKE '%Manager%'"
+    "SELECT employees.first_name, employees.last_name, employees.id, title FROM employees LEFT JOIN job_roles ON role_id = job_roles.id WHERE title LIKE '%Manager%'"
   );
 
   const answer = await inquirer.prompt([
@@ -184,29 +186,43 @@ const addEmployee = async () => {
           value: role.id,
         };
       }),
-      message: "What is this Employee's role id?",
+      message: "What is this Employee's role?",
+    },
+    {
+      name: "managerConfirm",
+      type: "confirm",
+      message: "Does this employee have a manager?",
     },
     {
       name: "employeeManagerId",
       type: "list",
       choices: managers.map((manager) => {
         return {
-          name: manager.first_name,
+          name: `${manager.first_name} ${manager.last_name}`,
           value: manager.id,
         };
       }),
-      message: "What is this Employee's Manager's Id?",
+      message: "Who is this Employee's Manager?",
+      when: (answer) => {
+        return answer.managerConfirm;
+      },
     },
   ]);
 
-  const result = await db.parameterisedQuery("INSERT INTO employees SET ?", {
-    first_name: answer.firstName,
-    last_name: answer.lastName,
-    role_id: answer.employeeRoleId,
-    manager_id: answer.employeeManagerId,
-  });
-  console.table(result);
-  console.log(`${answer.firstName} ${answer.lastName} added successfully!`);
+  await db.parameterisedQuery(
+    "INSERT INTO ?? SET ?",
+    [
+      "employees",
+      {
+        first_name: answer.firstName,
+        last_name: answer.lastName,
+        role_id: answer.employeeRoleId,
+        manager_id: answer.employeeManagerId,
+      },
+    ],
+    true
+  );
+  console.log("Employee information added successfully!");
 };
 
 const addRole = async () => {
@@ -238,16 +254,36 @@ const addRole = async () => {
 
   //How do I use the department id and insert a role?
   //figure out query
-  const { role } = await db.parameterisedQuery("INSERT INTO job_roles SET ??", {
-    title: answer.title,
-    salary: answer.salary,
-    department_id: answer.departmentId,
-  });
+  const { role } = await db.parameterisedQuery(
+    "INSERT INTO job_roles VALUES ?",
+    {
+      title: answer.title,
+      salary: answer.salary,
+      department_id: answer.departmentId,
+    }
+  );
 
   console.log(`${role.title} role added successfully.`);
 };
 
-const addDepartment = async () => {};
+const addDepartment = async () => {
+  const answer = await inquirer.prompt([
+    {
+      name: "departmentName",
+      type: "input",
+      message: "What is the name of the department you would like to add?",
+    },
+  ]);
+
+  await db.parameterisedQuery("INSERT INTO ?? SET ?", [
+    "departments",
+    {
+      dept_name: answer.departmentName,
+    },
+  ]);
+
+  console.log(`${answer.departmentName} department added successfully.`);
+};
 //update functions
 //function to choose a specific employee by id and update it/ choose from a list of employees? UPDATE
 const updateEmployeeRole = async () => {
@@ -287,45 +323,43 @@ const updateEmployeeRole = async () => {
     "UPDATE employees SET role_id = '?' WHERE id = '?'",
     [employeeId, roleId]
   );
+  console.table(updateQuery);
+  console.log("Employee updated successfully.");
 };
 
 const updateEmployeeManager = async () => {
   const employees = await db.query("SELECT * FROM employees");
-  const managers = await db.query(
-    "SELECT employees.first_name, employees.last_name, manager_id, title FROM employees LEFT JOIN job_roles ON role_id = job_roles.id WHERE title LIKE '%Manager%'"
-  );
 
   const employeeChoices = await employees.map((employee) => {
     //Return a "choice" object for inquirer
     return {
-      short: employee.first_name,
       value: employee.id,
-      name: employee.first_name,
+      name: `${employee.first_name} ${employee.last_name}`,
     };
   });
 
-  const managerChoices = await managers.map((manager) => {
-    //Return a "choice" object for inquirer
-    return {
-      short: manager.first_name,
-      value: manager.manager_id,
-      name: manager.first_name,
-    };
-  });
-
-  const employeeChoice = await inquirer.prompt([
+  const { employeeId } = await inquirer.prompt([
     {
       type: "list",
-      name: "employeeName",
+      name: "employeeId",
       message: "Which employee would you like to add a manager to?",
       choices: employeeChoices,
     },
   ]);
+  const managers = employees.filter((employee) => employee.id !== employeeId);
 
-  const managerChoice = await inquirer.prompt([
+  const managerChoices = await managers.map((manager) => {
+    //Return a "choice" object for inquirer
+    return {
+      value: manager.id,
+      name: `${manager.first_name} ${manager.last_name}`,
+    };
+  });
+
+  const { managerId } = await inquirer.prompt([
     {
       type: "list",
-      name: "managerName",
+      name: "managerId",
       message: "Which manager would you like to add to the employee?",
       choices: managerChoices,
     },
@@ -333,9 +367,10 @@ const updateEmployeeManager = async () => {
 
   const updateManagerQuery = await db.parameterisedQuery(
     "UPDATE employees SET manager_id = '?' WHERE id = '?'",
-    [managerChoice, employeeChoice]
+    [managerId, employeeId]
   );
 
+  console.log("Employee manager updated successfully.");
   console.table(updateManagerQuery);
 
   //await connection to table
