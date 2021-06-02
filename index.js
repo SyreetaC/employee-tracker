@@ -1,4 +1,3 @@
-const mysql = require("mysql");
 const inquirer = require("inquirer");
 const Db = require("./db/db");
 const db = new Db("company_db");
@@ -227,7 +226,6 @@ const addEmployee = async () => {
 
 const addRole = async () => {
   const departments = await db.query("SELECT * FROM departments");
-  console.log(departments);
 
   const answer = await inquirer.prompt([
     {
@@ -253,10 +251,7 @@ const addRole = async () => {
       message: "What department does this role belong to?",
     },
   ]);
-  console.log(answer);
 
-  //How do I use the department id and insert a role?
-  //figure out query
   await db.parameterisedQuery("INSERT INTO ?? SET ?", [
     "job_roles",
     {
@@ -313,7 +308,7 @@ const updateEmployeeRole = async () => {
       message: "Which employee would you like to update?",
       choices: employeeChoices,
     },
-  ]); //roleId = NULL!
+  ]);
   const { roleId } = await inquirer.prompt([
     {
       type: "list",
@@ -322,11 +317,11 @@ const updateEmployeeRole = async () => {
       choices: roleChoices,
     },
   ]);
-  const updateQuery = await db.parameterisedQuery(
+  await db.parameterisedQuery(
     "UPDATE employees SET role_id = '?' WHERE id = '?'",
     [employeeId, roleId]
   );
-  console.table(updateQuery);
+
   console.log("Employee updated successfully.");
 };
 
@@ -367,14 +362,12 @@ const updateEmployeeManager = async () => {
       choices: managerChoices,
     },
   ]);
-
-  const updateManagerQuery = await db.parameterisedQuery(
+  await db.parameterisedQuery(
     "UPDATE employees SET manager_id = '?' WHERE id = '?'",
     [managerId, employeeId]
   );
 
   console.log("Employee manager updated successfully.");
-  console.table(updateManagerQuery);
 
   //await connection to table
   //await inquirer prompt answers
@@ -389,7 +382,7 @@ const deleteEmployee = async () => {
     return {
       short: employee.id,
       value: employee.id,
-      name: `Delete the following employee: ${employee.first_name}`,
+      name: `Delete the following employee: ${employee.first_name} ${employee.last_name}`,
     };
   });
   const { employeeId } = await inquirer.prompt([
@@ -406,6 +399,7 @@ const deleteEmployee = async () => {
     "employees.id",
     employeeId,
   ]);
+  console.log("Employee deleted successfully");
 };
 
 init();
