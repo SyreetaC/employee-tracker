@@ -12,6 +12,7 @@ When the user runs the application in the Terminal:
 ## Demo video
 
 Please follow the link below to view a demonstration video:
+https://drive.google.com/file/d/11qkEGMJfeerEHcfNrQCmok9EgdyAJRhI/view
 
 ## Technologies used:
 
