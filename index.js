@@ -294,6 +294,7 @@ const updateEmployeeRole = async () => {
       name: `${employee.first_name} ${employee.last_name}`,
     };
   });
+
   const roleChoices = roles.map((role) => {
     return {
       name: role.title,
@@ -301,15 +302,14 @@ const updateEmployeeRole = async () => {
       value: role.id,
     };
   });
-  const { employeeId } = await inquirer.prompt([
+
+  const { employeeId, roleId } = await inquirer.prompt([
     {
       type: "list",
       name: "employeeId",
       message: "Which employee would you like to update?",
       choices: employeeChoices,
     },
-  ]);
-  const { roleId } = await inquirer.prompt([
     {
       type: "list",
       name: "roleId",
@@ -317,9 +317,10 @@ const updateEmployeeRole = async () => {
       choices: roleChoices,
     },
   ]);
+
   await db.parameterisedQuery(
     "UPDATE employees SET role_id = '?' WHERE id = '?'",
-    [employeeId, roleId]
+    [roleId, employeeId]
   );
 
   console.log("Employee updated successfully.");
