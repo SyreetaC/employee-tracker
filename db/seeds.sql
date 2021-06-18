@@ -1,10 +1,10 @@
 USE company_db;
---Departments
+-- Departments --
 INSERT INTO departments (dept_name) VALUES ('Sales');
 INSERT INTO departments (dept_name) VALUES ('Finance');
 INSERT INTO departments (dept_name) VALUES ('Human Resources');
 
---Roles
+-- Roles --
 INSERT INTO job_roles (title, salary, department_id) VALUES ('Sales Representative', '25000.00', '1');
 INSERT INTO job_roles (title, salary, department_id) VALUES ('Sales Manager', '35000.00', '1');
 
@@ -15,7 +15,7 @@ INSERT INTO job_roles (title, salary, department_id) VALUES ('Senior HR Advisor'
 INSERT INTO job_roles (title, salary, department_id) VALUES ('HR Advisor', '45000.00', '3');
 INSERT INTO job_roles (title, salary, department_id) VALUES ('Associate HR Advisor', '23000.00', '3');
 
---Employees
+-- Employees --
 INSERT INTO employees (first_name, last_name, role_id) VALUES 
 ('Sarah', 'Allen', '7'),
 ('John', 'Smith', '6'),
@@ -27,7 +27,7 @@ INSERT INTO employees (first_name, last_name, role_id) VALUES
  ('Lydia', 'Adams', '5'),
  ('Devinder', 'Singh', '1');
 
---Set managers
+-- Set managers --
 UPDATE employees SET manager_id = 6 WHERE id = 1; 
 UPDATE employees SET manager_id = 6 WHERE id BETWEEN 1 and 8; 
 UPDATE employees SET manager_id = NULL WHERE id = 5;
